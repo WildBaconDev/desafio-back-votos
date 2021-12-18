@@ -1,6 +1,7 @@
 package br.com.southsystem.votos.service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import br.com.southsystem.votos.exception.PautaNaoEncontradaException;
 import br.com.southsystem.votos.exception.PautaSemSessaoException;
 import br.com.southsystem.votos.exception.SessaoVotacaoFechadaException;
 import br.com.southsystem.votos.mapper.VotoMapper;
+import br.com.southsystem.votos.model.Pauta;
 import br.com.southsystem.votos.model.Voto;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,51 +31,49 @@ public class VotoServiceImpl implements VotoService {
 	
 	@Override
 	public VotoDTO votar(SolicitacaoVotoDTO solicitacaoVotoDTO) {
-		var pauta = pautaService.consultarPautaPorId( solicitacaoVotoDTO.getIdPauta() );
+		var pautaOpt = pautaService.consultarPautaPorId( solicitacaoVotoDTO.getIdPauta() );
 		
-		if (pauta.isEmpty()) {
-			log.error("Tentando votar em uma Pauta não encontrada.");
-			throw new PautaNaoEncontradaException();
-		}
+		validarPauta(pautaOpt);
 		
-		var votoDesteAssociado = votoDAO.findByIdAssociado( solicitacaoVotoDTO.getIdAssociado() );
+		var pauta = pautaOpt.get();
+		
+		var votoDesteAssociado = votoDAO.findByIdAssociadoAndSessaoId( solicitacaoVotoDTO.getIdAssociado(), pauta.getSessao().getId() );
 		if (votoDesteAssociado.isPresent()) {
 			log.error("Associado tentando votar novamente na pauta.");
 			throw new AssociadoVotandoNovamenteException();
 		}
 		
 		
-		if (pauta.get().getSessao() == null) {
-			log.error("Tentando votar em uma pauta sem sessão aberta.");
-			throw new PautaSemSessaoException();
-		}
-		
-		if ( LocalDateTime.now().isAfter(pauta.get().getSessao().getDhFechamento()) ) {
+		if ( LocalDateTime.now().isAfter(pautaOpt.get().getSessao().getDhFechamento()) ) {
 			log.error("Tentando votar em uma sessão já fechada.");
 			throw new SessaoVotacaoFechadaException();
 		}
 		
-		var voto = new Voto( solicitacaoVotoDTO.isVoto(), pauta.get().getSessao(), solicitacaoVotoDTO.getIdAssociado() );
+		var voto = new Voto( solicitacaoVotoDTO.isVoto(), pautaOpt.get().getSessao(), solicitacaoVotoDTO.getIdAssociado() );
 		
 		return VotoMapper.INSTANCE.toDTO( votoDAO.save( voto ) );
 	}
 
-	@Override
-	public ContagemVotosDTO contabilizarVotos(Long idPauta) {
-		var pauta = pautaService.consultarPautaPorId( idPauta );
-		
+	private void validarPauta(Optional<Pauta> pauta) {
 		if (pauta.isEmpty()) {
-			log.error("Tentando contabilizar a votação em uma Pauta não encontrada.");
+			log.error("Tentando votar em uma Pauta não encontrada.");
 			throw new PautaNaoEncontradaException();
 		}
 		
 		if (pauta.get().getSessao() == null) {
-			log.error("Tentando contabilizar a votação em uma Pauta sem sessão.");
+			log.error("Tentando votar em uma pauta sem sessão aberta.");
 			throw new PautaSemSessaoException();
 		}
+	}
+
+	@Override
+	public ContagemVotosDTO contabilizarEDarResultado(Long idPauta) {
+		var pauta = pautaService.consultarPautaPorId( idPauta );
+		
+		validarPauta(pauta);
 		
 		var contagem = votoDAO.contabilizarVotos( pauta.get().getSessao().getId() );
-		var resultado = pautaService.contabilizarVotos(idPauta, contagem);
+		var resultado = pautaService.gerarResultadoVotacao(idPauta, contagem);
 		contagem.setResultado( resultado );
 		
 		return contagem;

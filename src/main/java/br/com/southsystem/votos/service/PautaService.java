@@ -30,6 +30,6 @@ public interface PautaService {
 	 * @param contagemVotos
 	 * @return
 	 */
-	StatusContabilizacao contabilizarVotos(Long id, ContagemVotosDTO contagemVotos);
+	StatusContabilizacao gerarResultadoVotacao(Long id, ContagemVotosDTO contagemVotos);
 	
 }

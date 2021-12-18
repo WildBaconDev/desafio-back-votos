@@ -19,6 +19,7 @@ import br.com.southsystem.votos.dto.VotoDTO;
 import br.com.southsystem.votos.exception.AssociadoVotandoNovamenteException;
 import br.com.southsystem.votos.exception.PautaNaoEncontradaException;
 import br.com.southsystem.votos.exception.PautaSemSessaoException;
+import br.com.southsystem.votos.exception.SessaoVotacaoFechadaException;
 import br.com.southsystem.votos.service.VotoService;
 import io.swagger.annotations.ApiOperation;
 
@@ -36,7 +37,7 @@ public class VotoController {
 			return new ResponseEntity<>(votoService.votar(solicitacaoVotoDTO), HttpStatus.CREATED);
 		} catch (PautaNaoEncontradaException e) {
 			return ResponseEntity.notFound().build();
-		} catch (AssociadoVotandoNovamenteException e) {
+		} catch (AssociadoVotandoNovamenteException | SessaoVotacaoFechadaException | PautaSemSessaoException e) {
 			return ResponseEntity.badRequest().build();
 		} catch (Exception e) {
 			return ResponseEntity.internalServerError().build();
@@ -48,7 +49,7 @@ public class VotoController {
 	public ResponseEntity<ContagemVotosDTO> contabilizar(@NotNull @PathVariable("idPauta") Long idPauta) {
 		
 		try {
-			return new ResponseEntity<>(votoService.contabilizarVotos(idPauta), HttpStatus.OK);
+			return new ResponseEntity<>(votoService.contabilizarEDarResultado(idPauta), HttpStatus.OK);
 		} catch (PautaNaoEncontradaException e) {
 			return ResponseEntity.notFound().build();
 		} catch (PautaSemSessaoException e) {

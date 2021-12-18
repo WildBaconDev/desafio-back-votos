@@ -36,7 +36,7 @@ public class PautaServiceImpl implements PautaService {
 	}
 
 	@Override
-	public StatusContabilizacao contabilizarVotos(Long id, ContagemVotosDTO contagemVotos) {
+	public StatusContabilizacao gerarResultadoVotacao(Long id, ContagemVotosDTO contagemVotos) {
 		
 		var pautaOpt = consultarPautaPorId(id);
 		if (pautaOpt.isEmpty()) {

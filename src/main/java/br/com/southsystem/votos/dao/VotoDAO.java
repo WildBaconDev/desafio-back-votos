@@ -13,7 +13,7 @@ import br.com.southsystem.votos.model.Voto;
 @Repository
 public interface VotoDAO extends JpaRepository<Voto, Long> {
 
-	Optional<Voto> findByIdAssociado(Long idAssociado);
+	Optional<Voto> findByIdAssociadoAndSessaoId(Long idAssociado, Long sessaoId);
 
 	@Query(value = "SELECT new br.com.southsystem.votos.dto.ContagemVotosDTO( " + 
 			"  SUM( CASE WHEN voto.valorVoto = true THEN 1 ELSE 0 END ), " +

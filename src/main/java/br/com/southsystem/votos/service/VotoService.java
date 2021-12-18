@@ -18,6 +18,6 @@ public interface VotoService {
 	 * @param idPauta
 	 * @return
 	 */
-	ContagemVotosDTO contabilizarVotos(Long idPauta);
+	ContagemVotosDTO contabilizarEDarResultado(Long idPauta);
 	
 }
