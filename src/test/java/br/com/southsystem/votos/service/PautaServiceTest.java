@@ -45,7 +45,7 @@ class PautaServiceTest {
 
 		Mockito.when(pautaDAO.findById(1L)).thenReturn(Optional.of(new Pauta()));
 
-		var resultadoVotacao = pautaService.gerarResultadoVotacao(1L, new ContagemVotosDTO(1, 0));
+		var resultadoVotacao = pautaService.gerarResultadoVotacao(1L, new ContagemVotosDTO(1L, 0L));
 
 		assertNotNull(resultadoVotacao);
 		assertEquals(StatusContabilizacao.APROVADO, resultadoVotacao);
@@ -55,7 +55,7 @@ class PautaServiceTest {
 	void deve_gerar_resultado_votacao_recusado() {
 		Mockito.when(pautaDAO.findById(1L)).thenReturn(Optional.of(new Pauta()));
 
-		var resultadoVotacao = pautaService.gerarResultadoVotacao(1L, new ContagemVotosDTO(0, 1));
+		var resultadoVotacao = pautaService.gerarResultadoVotacao(1L, new ContagemVotosDTO(0L, 1L));
 
 		assertNotNull(resultadoVotacao);
 		assertEquals(StatusContabilizacao.RECUSADO, resultadoVotacao);
@@ -65,7 +65,7 @@ class PautaServiceTest {
 	void deve_gerar_resultado_votacao_inconclusivo() {
 		Mockito.when(pautaDAO.findById(1L)).thenReturn(Optional.of(new Pauta()));
 
-		var resultadoVotacao = pautaService.gerarResultadoVotacao(1L, new ContagemVotosDTO(1, 1));
+		var resultadoVotacao = pautaService.gerarResultadoVotacao(1L, new ContagemVotosDTO(1L, 1L));
 
 		assertNotNull(resultadoVotacao);
 		assertEquals(StatusContabilizacao.INCONCLUSIVO, resultadoVotacao);

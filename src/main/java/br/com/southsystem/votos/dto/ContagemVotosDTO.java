@@ -14,7 +14,7 @@ public class ContagemVotosDTO {
 	private Long qtdNao;
 	private StatusContabilizacao resultado;
 	
-	public ContagemVotosDTO(long qtdSim, long qtdNao) {
+	public ContagemVotosDTO(Long qtdSim, Long qtdNao) {
 		this.qtdSim = qtdSim;
 		this.qtdNao = qtdNao;
 	}

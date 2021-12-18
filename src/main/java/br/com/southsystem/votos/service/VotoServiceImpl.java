@@ -51,7 +51,9 @@ public class VotoServiceImpl implements VotoService {
 		
 		var voto = new Voto( solicitacaoVotoDTO.isVoto(), pautaOpt.get().getSessao(), solicitacaoVotoDTO.getIdAssociado() );
 		
-		return VotoMapper.INSTANCE.toDTO( votoDAO.save( voto ) );
+		votoDAO.save( voto );
+		
+		return VotoMapper.INSTANCE.toDTO( voto );
 	}
 
 	private void validarPauta(Optional<Pauta> pauta) {
