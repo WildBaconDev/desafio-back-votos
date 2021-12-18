@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import br.com.southsystem.votos.dao.PautaDAO;
 import br.com.southsystem.votos.dto.PautaDTO;
 import br.com.southsystem.votos.dto.SolicitacaoPautaDTO;
+import br.com.southsystem.votos.mapper.PautaMapper;
 import br.com.southsystem.votos.model.Pauta;
 
 @Service
@@ -19,7 +20,7 @@ public class PautaServiceImpl implements PautaService {
 		
 		pautaDAO.save( pauta );
 		
-		return null;
+		return PautaMapper.INSTANCE.toDTO( pauta );
 	}
 	
 }
