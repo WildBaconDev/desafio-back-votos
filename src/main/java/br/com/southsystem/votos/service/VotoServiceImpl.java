@@ -10,11 +10,13 @@ import br.com.southsystem.votos.dao.VotoDAO;
 import br.com.southsystem.votos.dto.ContagemVotosDTO;
 import br.com.southsystem.votos.dto.SolicitacaoVotoDTO;
 import br.com.southsystem.votos.dto.VotoDTO;
+import br.com.southsystem.votos.exception.AssociadoImpossibilitadoVotarException;
 import br.com.southsystem.votos.exception.AssociadoVotandoNovamenteException;
 import br.com.southsystem.votos.exception.PautaNaoEncontradaException;
 import br.com.southsystem.votos.exception.PautaSemSessaoException;
 import br.com.southsystem.votos.exception.SessaoVotacaoFechadaException;
 import br.com.southsystem.votos.mapper.VotoMapper;
+import br.com.southsystem.votos.model.AptoVotar;
 import br.com.southsystem.votos.model.Pauta;
 import br.com.southsystem.votos.model.Voto;
 import lombok.extern.slf4j.Slf4j;
@@ -29,10 +31,23 @@ public class VotoServiceImpl implements VotoService {
 	@Autowired
 	private PautaService pautaService;
 	
+	@Autowired
+	private UsersService usersService;
+	
 	@Override
 	public VotoDTO votar(SolicitacaoVotoDTO solicitacaoVotoDTO) {
-		var pautaOpt = pautaService.consultarPautaPorId( solicitacaoVotoDTO.getIdPauta() );
+		var pauta = pautaService.consultarPautaPorId( solicitacaoVotoDTO.getIdPauta() );
 		
+		validacoes(solicitacaoVotoDTO, pauta);
+		
+		var voto = new Voto( solicitacaoVotoDTO.isVoto(), pauta.get().getSessao(), solicitacaoVotoDTO.getIdAssociado() );
+		
+		votoDAO.save( voto );
+		
+		return VotoMapper.INSTANCE.toDTO( voto );
+	}
+
+	private void validacoes(SolicitacaoVotoDTO solicitacaoVotoDTO, Optional<Pauta> pautaOpt) {
 		validarPauta(pautaOpt);
 		
 		var pauta = pautaOpt.get();
@@ -49,11 +64,13 @@ public class VotoServiceImpl implements VotoService {
 			throw new SessaoVotacaoFechadaException();
 		}
 		
-		var voto = new Voto( solicitacaoVotoDTO.isVoto(), pautaOpt.get().getSessao(), solicitacaoVotoDTO.getIdAssociado() );
+		var cpf = usersService.gerarCpf();
+		var aptoVotar = usersService.consultaCpf(cpf);
 		
-		votoDAO.save( voto );
-		
-		return VotoMapper.INSTANCE.toDTO( voto );
+		if (AptoVotar.UNABLE_TO_VOTE.equals(aptoVotar)) {
+			log.error("Associado impossibilitado de votar.");
+			throw new AssociadoImpossibilitadoVotarException();
+		}
 	}
 
 	private void validarPauta(Optional<Pauta> pauta) {

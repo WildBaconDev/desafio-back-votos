@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.southsystem.votos.dto.ContagemVotosDTO;
 import br.com.southsystem.votos.dto.SolicitacaoVotoDTO;
 import br.com.southsystem.votos.dto.VotoDTO;
+import br.com.southsystem.votos.exception.AssociadoImpossibilitadoVotarException;
 import br.com.southsystem.votos.exception.AssociadoVotandoNovamenteException;
 import br.com.southsystem.votos.exception.PautaNaoEncontradaException;
 import br.com.southsystem.votos.exception.PautaSemSessaoException;
@@ -46,7 +47,7 @@ public class VotoController {
 			return new ResponseEntity<>(votoService.votar(solicitacaoVotoDTO), HttpStatus.CREATED);
 		} catch (PautaNaoEncontradaException e) {
 			return ResponseEntity.notFound().build();
-		} catch (AssociadoVotandoNovamenteException | SessaoVotacaoFechadaException | PautaSemSessaoException e) {
+		} catch (AssociadoVotandoNovamenteException | SessaoVotacaoFechadaException | PautaSemSessaoException | AssociadoImpossibilitadoVotarException e) {
 			return ResponseEntity.badRequest().build();
 		} catch (Exception e) {
 			return ResponseEntity.internalServerError().build();
