@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.southsystem.votos.dto.PautaDTO;
 import br.com.southsystem.votos.dto.SolicitacaoPautaDTO;
 import br.com.southsystem.votos.service.PautaService;
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/pauta")
@@ -21,7 +22,8 @@ public class PautaController {
 	@Autowired
 	private PautaService pautaService;
 	
-	@PostMapping
+	@PostMapping("/v1.0")
+	@ApiOperation(value = "Cadastra uma nova pauta")
 	public ResponseEntity<PautaDTO> cadastrarPauta(@Valid @RequestBody SolicitacaoPautaDTO solicitacaoPautaDTO) {
 		
 		try {
