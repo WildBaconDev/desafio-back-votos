@@ -1,5 +1,7 @@
 package br.com.southsystem.votos.service;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,11 @@ public class PautaServiceImpl implements PautaService {
 		pautaDAO.save( pauta );
 		
 		return PautaMapper.INSTANCE.toDTO( pauta );
+	}
+
+	@Override
+	public Optional<Pauta> consultarPautaPorId(Long id) {
+		return pautaDAO.findById(id);
 	}
 	
 }

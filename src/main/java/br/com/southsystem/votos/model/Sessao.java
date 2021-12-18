@@ -13,9 +13,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity(name = "SESSAO")
 @Data
+@NoArgsConstructor
 public class Sessao {
 
 	@Id
@@ -34,5 +36,16 @@ public class Sessao {
 	private Pauta pauta;
 	
 	@Column(name = "DH_CRIACAO")
-	private LocalDateTime dhCriacao;
+	private LocalDateTime dhCriacao = LocalDateTime.now();
+
+	/**
+	 * Irá instanciar uma Sessão com a hora de fechamento calculada com os minutos.
+	 * @param pauta
+	 * @param minutos
+	 */
+	public Sessao(Pauta pauta, int minutos) {
+		this.dhFechamento = LocalDateTime.now().plusMinutes(minutos);
+		this.pauta = pauta;
+	}
+	
 }
