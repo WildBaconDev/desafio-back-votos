@@ -1,5 +1,9 @@
 package br.com.southsystem.votos.controller;
 
+import static br.com.southsystem.votos.util.ResponseMessages.INTERNAL_SERVER;
+import static br.com.southsystem.votos.util.ResponseMessages.PAUTA_NAO_ENCONTRADA;
+import static br.com.southsystem.votos.util.ResponseMessages.SESSAO_ABERTA_COM_SUCESSO;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +20,8 @@ import br.com.southsystem.votos.exception.PautaComSessaoExistenteException;
 import br.com.southsystem.votos.exception.PautaNaoEncontradaException;
 import br.com.southsystem.votos.service.SessaoService;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 @RestController
 @RequestMapping("/sessao")
@@ -26,6 +32,11 @@ public class SessaoController {
 	
 	@PostMapping("/v1.0/abrir")
 	@ApiOperation(value = "Abre uma sessão de votação em uma pauta")
+	@ApiResponses(value = {
+			@ApiResponse(code = 201, message = SESSAO_ABERTA_COM_SUCESSO, response = SessaoDTO.class),
+			@ApiResponse(code = 404, message = PAUTA_NAO_ENCONTRADA),
+			@ApiResponse(code = 500, message = INTERNAL_SERVER) 
+	})
 	public ResponseEntity<SessaoDTO> abrirSessao(@Valid @RequestBody SolicitacaoAberturaSessaoDTO solicitacaoAberturaSessaoDTO) {
 		try {
 			var sessao = sessaoService.solicitarAberturaSessao(solicitacaoAberturaSessaoDTO);

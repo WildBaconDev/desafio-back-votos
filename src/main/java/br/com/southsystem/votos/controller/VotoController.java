@@ -1,5 +1,7 @@
 package br.com.southsystem.votos.controller;
 
+import static br.com.southsystem.votos.util.ResponseMessages.*;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -22,6 +24,8 @@ import br.com.southsystem.votos.exception.PautaSemSessaoException;
 import br.com.southsystem.votos.exception.SessaoVotacaoFechadaException;
 import br.com.southsystem.votos.service.VotoService;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 @RestController
 @RequestMapping("/voto")
@@ -29,9 +33,14 @@ public class VotoController {
 
 	@Autowired
 	private VotoService votoService;
-	
-	@PostMapping("/v1.0/votar")
+
+	@PostMapping("/v1.0")
 	@ApiOperation(value = "Recebe voto do associado em pauta")
+	@ApiResponses(value = {
+			@ApiResponse(code = 201, message = VOTO_CADASTRADO_COM_SUCESSO, response = VotoDTO.class),
+			@ApiResponse(code = 404, message = PAUTA_NAO_ENCONTRADA),
+			@ApiResponse(code = 500, message = INTERNAL_SERVER) 
+	})
 	public ResponseEntity<VotoDTO> votar(@Valid @RequestBody SolicitacaoVotoDTO solicitacaoVotoDTO) {
 		try {
 			return new ResponseEntity<>(votoService.votar(solicitacaoVotoDTO), HttpStatus.CREATED);
@@ -43,11 +52,16 @@ public class VotoController {
 			return ResponseEntity.internalServerError().build();
 		}
 	}
-	
+
 	@PutMapping("/v1.0/contabilizar/{idPauta}")
 	@ApiOperation(value = "Contabiliza os votos e da o resultado da votação na pauta.")
+	@ApiResponses(value = {
+			@ApiResponse(code = 201, message = CONTAGEM_EFETUADA_COM_SUCESSO, response = VotoDTO.class),
+			@ApiResponse(code = 404, message = PAUTA_NAO_ENCONTRADA),
+			@ApiResponse(code = 500, message = INTERNAL_SERVER) 
+	})
 	public ResponseEntity<ContagemVotosDTO> contabilizar(@NotNull @PathVariable("idPauta") Long idPauta) {
-		
+
 		try {
 			return new ResponseEntity<>(votoService.contabilizarEDarResultado(idPauta), HttpStatus.OK);
 		} catch (PautaNaoEncontradaException e) {
