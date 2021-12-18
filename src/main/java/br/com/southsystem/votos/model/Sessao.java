@@ -43,7 +43,9 @@ public class Sessao {
 	 * @param pauta
 	 * @param minutos
 	 */
-	public Sessao(Pauta pauta, int minutos) {
+	public Sessao(Pauta pauta, Integer minutos) {
+		if (minutos == null) minutos = 1;
+		
 		this.dhFechamento = LocalDateTime.now().plusMinutes(minutos);
 		this.pauta = pauta;
 	}

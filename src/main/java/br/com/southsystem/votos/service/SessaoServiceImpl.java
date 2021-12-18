@@ -39,7 +39,9 @@ public class SessaoServiceImpl implements SessaoService {
 		
 		var sessao = new Sessao(pauta.get(), solicitacaoAberturaSessaoDTO.getMinutosSessaoAberta());
 		
-		return SessaoMapper.INSTANCE.toDTO( sessaoDAO.save( sessao ) );
+		sessaoDAO.save( sessao );
+		
+		return SessaoMapper.INSTANCE.toDTO( sessao );
 	}
 
 }
