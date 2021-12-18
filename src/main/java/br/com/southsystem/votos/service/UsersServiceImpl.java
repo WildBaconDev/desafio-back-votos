@@ -37,6 +37,7 @@ public class UsersServiceImpl implements UsersService {
 		if (cpf == null) return null;
 		
 		try {
+			log.info("Requisitando a validação do CPF " + cpf);
 			var response = new RestTemplate().getForEntity(userUrl + "/" + cpf, StatusAssociadoDTO.class);
 			
 			if ( HttpStatus.NOT_FOUND.equals(response.getStatusCode()) ) {
@@ -46,8 +47,9 @@ public class UsersServiceImpl implements UsersService {
 				log.error("Erro não esperado");
 				throw new HttpStatusNaoEsperadoException("Status code não esperado");
 			}
-			
-			return response.getBody().getStatus();
+			var status = response.getBody().getStatus();
+			log.info("Requisição finalizada com sucesso. STATUS: " + status);
+			return status;
 		} catch (RestClientException e) {
 			log.error("Erro inesperado" + e.getMessage());
 			
@@ -65,12 +67,16 @@ public class UsersServiceImpl implements UsersService {
 		var request = new HttpEntity<String>(headers);
 		
 		try {
+			log.info("Requisitando a geração do CPF ");
 			var response = new RestTemplate().exchange(geradorAppUrl, HttpMethod.GET, request, GeradorCPFDTO.class);			
 
 			if ( HttpStatus.OK.equals(response.getStatusCode()) ) {
-				return response.getBody().getNumber();
+				var cpf = response.getBody().getNumber();
+				log.info("Requisição finalizada com sucesso. CPF: " + cpf);
+				return cpf;
 			}
 			
+			log.info("Requisição retornou com um status não esperado. Retornando null.");
 			return null;
 		} catch(Exception e) {
 			log.error("Erro inesperado" + e.getMessage());
