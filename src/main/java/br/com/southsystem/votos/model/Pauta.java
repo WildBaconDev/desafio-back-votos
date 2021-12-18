@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -33,6 +35,10 @@ public class Pauta {
 	
 	@Column(name = "DH_CRIACAO")
 	private LocalDateTime dhCriacao = LocalDateTime.now();
+	
+	@Column(name = "ST_CONTABILIZACAO")
+	@Enumerated(EnumType.ORDINAL)
+	private StatusContabilizacao statusContabilizacao = StatusContabilizacao.NAO_CONTABILIZADO;
 
 	public Pauta(String assunto, String corpo) {
 		this.assunto = assunto;

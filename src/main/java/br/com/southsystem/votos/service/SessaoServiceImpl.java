@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import br.com.southsystem.votos.dao.SessaoDAO;
 import br.com.southsystem.votos.dto.SessaoDTO;
 import br.com.southsystem.votos.dto.SolicitacaoAberturaSessaoDTO;
+import br.com.southsystem.votos.exception.PautaComSessaoExistenteException;
 import br.com.southsystem.votos.exception.PautaNaoEncontradaException;
 import br.com.southsystem.votos.mapper.SessaoMapper;
 import br.com.southsystem.votos.model.Sessao;
@@ -28,6 +29,12 @@ public class SessaoServiceImpl implements SessaoService {
 		if (pauta.isEmpty()	) {
 			log.error("Tentando solicitar uma abertura de sessão com uma Pauta não encontrada.");
 			throw new PautaNaoEncontradaException();
+		}
+		
+		var sessaoAbertaParaPauta = sessaoDAO.findByPautaId( pauta.get().getId() );
+		if (sessaoAbertaParaPauta.isPresent()) {
+			log.error("Tentando solicitar uma abertura de sessão com uma Pauta que já possui sessão.");
+			throw new PautaComSessaoExistenteException();
 		}
 		
 		var sessao = new Sessao(pauta.get(), solicitacaoAberturaSessaoDTO.getMinutosSessaoAberta());
