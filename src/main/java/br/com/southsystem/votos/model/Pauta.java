@@ -37,7 +37,7 @@ public class Pauta {
 	private LocalDateTime dhCriacao = LocalDateTime.now();
 	
 	@Column(name = "ST_CONTABILIZACAO")
-	@Enumerated(EnumType.ORDINAL)
+	@Enumerated(EnumType.STRING)
 	private StatusContabilizacao statusContabilizacao = StatusContabilizacao.NAO_CONTABILIZADO;
 
 	public Pauta(String assunto, String corpo) {

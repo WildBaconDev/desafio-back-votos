@@ -12,4 +12,5 @@ spring:
 
 user.service.url: https://user-info.herokuapp.com/users
 gerador.app.cpf.url: https://gerador.app/api/cpf/generate
+gerador.app.token: kNNPpPx9T3mMvGuuQXJvD4qlnM6r3GtFTYw73Usl
 

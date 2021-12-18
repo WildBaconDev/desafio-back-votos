@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    username: sa
+    url: jdbc:hsqldb:mem:testdb
+    password: ''
+    platform: h2
+  jpa:
+    database: h2
+    database-platform: org.hibernate.dialect.HSQLDialect
+    show-sql: 'true'
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: create

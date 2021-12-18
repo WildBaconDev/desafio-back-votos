@@ -14,14 +14,15 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 
-
 import br.com.southsystem.votos.dao.VotoDAO;
 import br.com.southsystem.votos.dto.ContagemVotosDTO;
 import br.com.southsystem.votos.dto.SolicitacaoVotoDTO;
+import br.com.southsystem.votos.exception.AssociadoImpossibilitadoVotarException;
 import br.com.southsystem.votos.exception.AssociadoVotandoNovamenteException;
 import br.com.southsystem.votos.exception.PautaNaoEncontradaException;
 import br.com.southsystem.votos.exception.PautaSemSessaoException;
 import br.com.southsystem.votos.exception.SessaoVotacaoFechadaException;
+import br.com.southsystem.votos.model.AptoVotar;
 import br.com.southsystem.votos.model.Pauta;
 import br.com.southsystem.votos.model.Sessao;
 import br.com.southsystem.votos.model.StatusContabilizacao;
@@ -38,11 +39,14 @@ class VotoServiceTest {
 	
 	@Mock
 	private PautaService pautaService;
+	
+	@Mock
+	private UsersService usersService;
 
 	@Test
 	void deve_votar_com_sucesso() {
 		var solicitacaoVoto = criarSolicitacaoVotoDTO(true);
-		
+	
 		Mockito.when( pautaService.consultarPautaPorId(solicitacaoVoto.getIdPauta()) ).thenReturn(criarPauta());
 		var votoCadastrado = votoService.votar(solicitacaoVoto);
 		
@@ -90,6 +94,17 @@ class VotoServiceTest {
 		pauta.get().getSessao().setDhFechamento(LocalDateTime.now().minusSeconds(1).withNano(0));
 		Mockito.when( pautaService.consultarPautaPorId(solicitacao.getIdPauta()) ).thenReturn(pauta);
 		Assertions.assertThrows(SessaoVotacaoFechadaException.class, () -> {
+			votoService.votar(solicitacao);			
+		});
+	}
+	
+	@Test
+	void deve_gerar_exception_associado_inapto_votar() {
+		var solicitacao = criarSolicitacaoVotoDTO(true);
+		
+		Mockito.when( pautaService.consultarPautaPorId(solicitacao.getIdPauta()) ).thenReturn(criarPauta());
+		Mockito.when( usersService.consultaCpf(null) ).thenReturn(AptoVotar.UNABLE_TO_VOTE);
+		Assertions.assertThrows(AssociadoImpossibilitadoVotarException.class, () -> {
 			votoService.votar(solicitacao);			
 		});
 	}
