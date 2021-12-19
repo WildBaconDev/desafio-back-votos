@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import br.com.southsystem.votos.exception.HttpStatusNaoEsperadoException;
 import br.com.southsystem.votos.model.AptoVotar;
 
 @SpringBootTest
+@AutoConfigureTestDatabase
 class UsersServiceImplTest {
 
 	private static final String CPF = "707.255.060-75";
