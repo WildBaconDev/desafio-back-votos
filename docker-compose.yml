@@ -1,0 +1,29 @@
+version: '3'
+services:
+
+ mysqldb:
+  image: mysql
+  command: --default-authentication-plugin=mysql_native_password
+  restart: unless-stopped
+  environment:
+   MYSQL_ROOT_PASSWORD: root
+
+ app:
+  image: southsystem/votos-api
+  build:
+   context: .
+   dockerfile: ./Dockerfile
+  ports:
+   - 8080:8080
+  restart: on-failure
+  depends_on:
+   - mysqldb
+  environment:
+   - SPRING_PROFILES_ACTIVE=prod
+   - SPRING_DATASOURCE_URL=jdbc:mysql://mysqldb:3306/votos?createDatabaseIfNotExist=true 
+   - SPRING_DATASOURCE_USERNAME=root
+   - SPRING_DATASOURCE_PASSWORD=root
+   - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+   - USER_SERVICE_URL=https://user-info.herokuapp.com/users
+   - GERADOR_APP_CPF_URL=https://gerador.app/api/cpf/generate
+   - GERADOR_APP_TOKEN=kNNPpPx9T3mMvGuuQXJvD4qlnM6r3GtFTYw73Usl 
