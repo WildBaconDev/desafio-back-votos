@@ -27,7 +27,10 @@ public class SpringFoxConfig {
     private ApiInfo apiInfo(){
         return new ApiInfoBuilder()
                 .title("Votos API")
-                .description("Documentação Votos API V1.0")
+                .description("Documentação Votos API V1.0 <br>" + 
+                		"Na Pauta controller é possível criar a nova pauta e solicitar contagem e resultado da votação.<br>" +
+                		"Na Sessão controller é onde será solicitado a abertura da sessão<br>" +
+                		"No Voto controller é onde é feito o voto.")
                 .build();
     }
     

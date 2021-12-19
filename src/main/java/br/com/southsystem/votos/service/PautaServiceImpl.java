@@ -22,6 +22,9 @@ public class PautaServiceImpl implements PautaService {
 	@Autowired
 	private PautaDAO pautaDAO;
 	
+	@Autowired
+	private VotoService votoService;
+	
 	public PautaDTO cadastrarPauta(SolicitacaoPautaDTO solicitacaoPautaDTO) {
 		var pauta = new Pauta( solicitacaoPautaDTO.getAssunto(), solicitacaoPautaDTO.getCorpo() );
 		
@@ -36,15 +39,7 @@ public class PautaServiceImpl implements PautaService {
 	}
 
 	@Override
-	public StatusContabilizacao gerarResultadoVotacao(Long id, ContagemVotosDTO contagemVotos) {
-		
-		var pautaOpt = consultarPautaPorId(id);
-		if (pautaOpt.isEmpty()) {
-			log.error("Tentando contabilizar a votação em uma Pauta não encontrada.");
-			throw new PautaNaoEncontradaException();
-		}
-		
-		var pauta = pautaOpt.get();
+	public StatusContabilizacao gerarResultadoVotacao(Pauta pauta, ContagemVotosDTO contagemVotos) {
 		
 		if (contagemVotos.getQtdSim() > contagemVotos.getQtdNao()) {
 			pauta.setStatusContabilizacao( StatusContabilizacao.APROVADO );
@@ -57,6 +52,26 @@ public class PautaServiceImpl implements PautaService {
 		pautaDAO.save( pauta );
 		
 		return pauta.getStatusContabilizacao();
+	}
+
+	@Override
+	public ContagemVotosDTO contabilizarEDarResultado(Long idPauta) {
+		var pautaOpt = consultarPautaPorId(idPauta);
+		if (pautaOpt.isEmpty()) {
+			log.error("Tentando contabilizar a votação em uma Pauta não encontrada.");
+			throw new PautaNaoEncontradaException();
+		}
+		
+		var contagem = votoService.contabilizarVotos(idPauta);
+		
+		if (contagem != null) {
+			var resultado = gerarResultadoVotacao(pautaOpt.get(), contagem);
+			contagem.setResultado(resultado);
+			
+			return contagem;			
+		}
+		
+		return new ContagemVotosDTO(0L, 0L, StatusContabilizacao.INCONCLUSIVO);
 	}
 	
 }

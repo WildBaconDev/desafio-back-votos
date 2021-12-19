@@ -2,6 +2,7 @@ package br.com.southsystem.votos.service;
 
 import java.util.Collections;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -32,13 +33,16 @@ public class UsersServiceImpl implements UsersService {
 	@Value("${gerador.app.token}")
 	private String token;
 	
+	@Autowired
+	private RestTemplate restTemplate;
+	
 	@Override
 	public AptoVotar consultaCpf(String cpf) {
 		if (cpf == null) return null;
 		
 		try {
 			log.info("Requisitando a validação do CPF " + cpf);
-			var response = new RestTemplate().getForEntity(userUrl + "/" + cpf, StatusAssociadoDTO.class);
+			var response = restTemplate.getForEntity(userUrl + "/" + cpf, StatusAssociadoDTO.class);
 			
 			if ( HttpStatus.NOT_FOUND.equals(response.getStatusCode()) ) {
 				log.error("CPF Inválido");
@@ -68,7 +72,7 @@ public class UsersServiceImpl implements UsersService {
 		
 		try {
 			log.info("Requisitando a geração do CPF ");
-			var response = new RestTemplate().exchange(geradorAppUrl, HttpMethod.GET, request, GeradorCPFDTO.class);			
+			var response = restTemplate.exchange(geradorAppUrl, HttpMethod.GET, request, GeradorCPFDTO.class);			
 
 			if ( HttpStatus.OK.equals(response.getStatusCode()) ) {
 				var cpf = response.getBody().getNumber();

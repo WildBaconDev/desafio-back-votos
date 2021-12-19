@@ -14,7 +14,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.google.gson.Gson;
 
-import br.com.southsystem.votos.dto.ContagemVotosDTO;
 import br.com.southsystem.votos.dto.SolicitacaoVotoDTO;
 import br.com.southsystem.votos.dto.VotoDTO;
 import br.com.southsystem.votos.service.VotoService;
@@ -41,17 +40,6 @@ class VotoControllerTest {
 					.content(json)
 					.contentType(MediaType.APPLICATION_JSON)
 				).andExpect(MockMvcResultMatchers.status().is( HttpStatus.CREATED.value() ));	
-	}
-	
-	@Test
-	void deve_contabilizar() throws Exception {
-		Mockito.when(votoService.contabilizarEDarResultado(1L)).thenReturn(new ContagemVotosDTO());
-		
-		mockMvc.perform(
-				MockMvcRequestBuilders
-					.put("/voto/v1.0/contabilizar/1")
-					.contentType(MediaType.APPLICATION_JSON)
-				).andExpect(MockMvcResultMatchers.status().is( HttpStatus.OK.value() ));	
 	}
 	
 	private SolicitacaoVotoDTO criarSolicitacaoVotoDTO(Boolean voto) {

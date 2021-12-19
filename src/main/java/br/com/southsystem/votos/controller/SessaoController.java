@@ -22,9 +22,11 @@ import br.com.southsystem.votos.service.SessaoService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/sessao")
+@Slf4j
 public class SessaoController {
 	
 	@Autowired
@@ -47,6 +49,7 @@ public class SessaoController {
 		} catch (PautaComSessaoExistenteException e) {
 			return ResponseEntity.badRequest().build();
 		} catch (Exception e) {
+			log.error("Internal server error!" + e.getMessage());
 			return ResponseEntity.internalServerError().build();
 		}
 	}

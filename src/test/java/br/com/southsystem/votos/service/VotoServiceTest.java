@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import br.com.southsystem.votos.dao.VotoDAO;
@@ -25,10 +26,10 @@ import br.com.southsystem.votos.exception.SessaoVotacaoFechadaException;
 import br.com.southsystem.votos.model.AptoVotar;
 import br.com.southsystem.votos.model.Pauta;
 import br.com.southsystem.votos.model.Sessao;
-import br.com.southsystem.votos.model.StatusContabilizacao;
 import br.com.southsystem.votos.model.Voto;
 
 @SpringBootTest
+@AutoConfigureTestDatabase
 class VotoServiceTest {
 
 	@InjectMocks
@@ -115,15 +116,12 @@ class VotoServiceTest {
 		Mockito.when(pautaService.consultarPautaPorId( 1L )).thenReturn( criarPauta() );
 		var contagem = new ContagemVotosDTO(2L, 0L);
 		Mockito.when( votoDAO.contabilizarVotos( 1L )).thenReturn( contagem );
-		Mockito.when( pautaService.gerarResultadoVotacao(1L, contagem) )
-			.thenReturn(StatusContabilizacao.APROVADO);
 		
-		var resultado = votoService.contabilizarEDarResultado(1L);
+		var resultado = votoService.contabilizarVotos(1L);
 		
 		assertNotNull(resultado);
 		assertEquals(2L, resultado.getQtdSim());
 		assertEquals(0L, resultado.getQtdNao());
-		assertEquals(StatusContabilizacao.APROVADO, resultado.getResultado());
 	}
 	
 	private Optional<Pauta> criarPauta() {

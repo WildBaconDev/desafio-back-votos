@@ -37,6 +37,15 @@ class PautaControllerTest {
 				).andExpect(MockMvcResultMatchers.status().is( HttpStatus.CREATED.value() ));	
 	}
 	
+	@Test
+	void deve_contabilizar() throws Exception {
+		mockMvc.perform(
+				MockMvcRequestBuilders
+					.put("/pauta/v1.0/contabilizar/1")
+					.contentType(MediaType.APPLICATION_JSON)
+				).andExpect(MockMvcResultMatchers.status().is( HttpStatus.OK.value() ));	
+	}
+	
 	private SolicitacaoPautaDTO criarSolicitacaoPautaDTO() {
 		var solicitacaoPautaDTO = new SolicitacaoPautaDTO();
 		solicitacaoPautaDTO.setAssunto("assunto");

@@ -86,14 +86,11 @@ public class VotoServiceImpl implements VotoService {
 	}
 
 	@Override
-	public ContagemVotosDTO contabilizarEDarResultado(Long idPauta) {
+	public ContagemVotosDTO contabilizarVotos(Long idPauta) {
 		var pauta = pautaService.consultarPautaPorId( idPauta );
 		
 		validarPauta(pauta);
-		
 		var contagem = votoDAO.contabilizarVotos( pauta.get().getSessao().getId() );
-		var resultado = pautaService.gerarResultadoVotacao(idPauta, contagem);
-		contagem.setResultado( resultado );
 		
 		return contagem;
 	}

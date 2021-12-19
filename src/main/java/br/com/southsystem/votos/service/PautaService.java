@@ -25,11 +25,18 @@ public interface PautaService {
 	Optional<Pauta> consultarPautaPorId(Long id);
 	
 	/**
+	 * Contabiliza os votos e da o resultado da votação na pauta.
+	 * @param idPauta
+	 * @return
+	 */
+	ContagemVotosDTO contabilizarEDarResultado(Long idPauta); 
+	/**
 	 * Salva no banco o resultado da votação baseado na contagem.
-	 * @param id
+	 * @param pauta
 	 * @param contagemVotos
 	 * @return
 	 */
-	StatusContabilizacao gerarResultadoVotacao(Long id, ContagemVotosDTO contagemVotos);
+	StatusContabilizacao gerarResultadoVotacao(Pauta pauta, ContagemVotosDTO contagemVotos);
+	
 	
 }

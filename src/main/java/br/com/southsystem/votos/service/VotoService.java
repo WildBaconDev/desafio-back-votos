@@ -14,10 +14,10 @@ public interface VotoService {
 	VotoDTO votar(SolicitacaoVotoDTO solicitacaoVotoDTO);
 	
 	/**
-	 * Contabiliza os votos e da o resultado da votação na pauta.
+	 * Contabiliza os votos
 	 * @param idPauta
 	 * @return
 	 */
-	ContagemVotosDTO contabilizarEDarResultado(Long idPauta);
+	ContagemVotosDTO contabilizarVotos(Long idPauta);
 	
 }
